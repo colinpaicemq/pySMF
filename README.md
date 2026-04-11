@@ -73,7 +73,7 @@ smf30st1.process() has
             q.xtriplet(n="ProcessorAccounting",t=processor_accounting),
             q.xx(n="AccountingTriplet",l=8,p="no"),
             ...
-        gg]   
+        ]   
 
 The layout of the data  is in the format of q.type(values)
 Where values can be 
