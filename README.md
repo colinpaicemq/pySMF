@@ -6,12 +6,41 @@ This suite of Python programs reads and SMF datasets and processes the dat as de
 The output is a list of rows of Python dictionaries.
 This list can be fed into Pandas for processing, or your own Python programs.
 
-## Support for HLAsM SYSADATA
+## Support for HLASM SYSADATA
 
 This has support for HLASM SYSADATA format
 
 
     python3 adata.py -dsn "//'COLIN.SYSADATA'""
+
+It produces
+
+
+
+        ESDID              Symbol  Offset  Length TypeA       SymType    CSECT
+    4294967295                ABCD       0       8     C OrdinaryLabel   COLIN2
+    4294967295              COLIN2       0       1     J         DSECT   COLIN2
+    4294967295               ABCDE       8       8     C OrdinaryLabel   COLIN2
+             1            CSQ6LOGP       0       1     J         CSECT CSQ6LOGP
+             1                LOGP       0       8     D OrdinaryLabel CSQ6LOGP
+             1              LOGPID       0       2     R OrdinaryLabel CSQ6LOGP
+             1              LOGPLL       2       2     R OrdinaryLabel CSQ6LOGP
+             1             LOGPEID       4       4     C OrdinaryLabel CSQ6LOGP
+             1            LOGPMRTU       8       2     R OrdinaryLabel CSQ6LOGP
+             1             LOGOPT1      10       1     R OrdinaryLabel CSQ6LOGP
+             1             LOGOPT2      11       1     R OrdinaryLabel CSQ6LOGP
+             1            LOGPMCOF      12       2     R OrdinaryLabel CSQ6LOGP
+             1            LOGPOBPS      16       4     R OrdinaryLabel CSQ6LOGP
+             1            LOGPIBPS      20       4     R OrdinaryLabel CSQ6LOGP
+             1            LOGPARCL      24       4     R OrdinaryLabel CSQ6LOGP
+             1            LOGPWRTH      30       2     R OrdinaryLabel CSQ6LOGP
+             1             LOGPLVL      32       7     C OrdinaryLabel CSQ6LOGP
+             1            LOGPLVLN      39       1     R OrdinaryLabel CSQ6LOGP
+             1            LOGPDMIN      40       2     R OrdinaryLabel CSQ6LOGP
+             1            LOGPDSEC      42       2     R OrdinaryLabel CSQ6LOGP
+             1            LOGPCOMP      44       4     R OrdinaryLabel CSQ6LOGP
+             1             LOGPEND     256       1     U           EQU CSQ6LOGP
+
 
 
 ## Define a  record layout.
