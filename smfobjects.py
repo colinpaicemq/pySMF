@@ -53,9 +53,9 @@ class common:
 
         # print("==3",self.__class__)
         if l is None:
-            raise ValueError("SMF:length value (l) is not set")
+            raise ValueError("length value (l) is not set")
         if n is None:
-            raise ValueError("SMF:name value (n) is not set")
+            raise ValueError("name value (n) is not set")
         self.x = x
         self.x0 = x0
         self.x1 = x1
@@ -141,7 +141,7 @@ class common:
                 raise ValueError("SMF: Value does not match the v=value in"+name,self.value,self.constant)
 
     def __str__(self):
-        print("smfo158",self.value,type(self.value))
+        #print("smfo158",self.value,type(self.value))
         super().__str__(self.value)
         #return str(self.value)
         #return f"{self.value}"
@@ -153,7 +153,8 @@ class xs(common):
     '''
     String or character
     '''
-    def __init__(self,n=None,c=None,l=None,x=None,p=None,o=None,v=None,debug=None,i=False,strip=False):
+    def __init__(self,n=None,c=None,l=None,x=None,p=None,o=None,v=None,
+                 debug=None,i=False,strip=False,ea=None):
         super().__init__(n=n,c=c,l=l,x=x,p=p,o=o,i=i)
         if l <= 0 or l > 1024:
             raise ValueError("invalid length value(l).  It needs to be in range 1 to 1024")
@@ -163,6 +164,8 @@ class xs(common):
         self.length = l
         self.debug = debug
         self.strip = strip
+        self.ea = ea
+        
 
     def set(self,value):
         if not isinstance(value, bytes):
@@ -171,19 +174,22 @@ class xs(common):
         #print(''.join(format(x, '02x') for x in value))
         # print("????",self.name,len(value),dumphex.dumphex(value))
         try:
+            
             if value[0] == 0:
                 self.value = "NULL"
             elif value[0] == 255:  # 0xff
                 self.value = "NULL"
             else:
-                m = value.decode("cp500")
-                e = m.encode('ascii')
-                value = e.decode("utf-8") 
+                if self.ea == "E": # Ebcdic
+                    m = value.decode("cp500")
+                    e = m.encode('ascii')
+                    value = e.decode("utf-8") 
                 # print("=====179",value, ".", value.rstrip(),"!",len(value.rstrip( " ")))
                 #if self.name == "DSN":
                 #    print("DSN", self.strip)
                 if self.strip  is True:
                     value = value.rstrip(" ")
+                #print("smf190",value,type(value),value)    
                 self.value = value
         except Exception as e:
             print("exception","Element name:",self.name,e, "offset",self.offset)
@@ -206,7 +212,8 @@ class xu(common):
         if l in struct_codes:
             self.struct = struct_codes[l]
         else:
-            raise ValueError("SMF: invalid length value(l).  It needs to be one of 1,2,4,8. Name=",n)
+            raise ValueError("SMF: invalid length value(l). " +
+                             " It needs to be one of 1,2,4,8. Name=",n)
     def set(self,value):
         super().set(value)
         #print("smfo xu 216A",self.value,type(self.value),self.name)
@@ -282,10 +289,10 @@ class ig(xb):  #
         super().__init__(n=n,c=c,l=l,x=x,p=p,o=o,i=i)
         self.ignore=True
     def set(self,value):
-        super().set(value)    
+        super().set(value)   
 
 
-class ig2(common):  # 
+class ig2(common):  #
     '''
     ignore ... do not produce any output - used as spacing in structure
     '''
@@ -349,7 +356,6 @@ class SMFTime(common):
             dt = datetime.time(hour=hh,minute=mm,second=ss,microsecond= hundreds * 10000)
 
             self.value = dt.strftime("%H:%M:%S.%f")[0:11]
-     
 
     def __str__(self):
 

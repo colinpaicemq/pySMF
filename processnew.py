@@ -4,6 +4,7 @@ take the structure of data, and the input record and create the structure with t
 import struct
 from collections import OrderedDict
 import dumphex
+import traceback
 
 def processit(opts,line,position):
     '''
@@ -15,21 +16,28 @@ def processit(opts,line,position):
     # calculate the length of our data, and the specified offset matches where we are
     lline= len(line)
     #for o1 in opts:
-    for n, o1 in enumerate(opts):
+    #print("pn 19 size",len(opts))g
+    try:
+      for n, o1 in enumerate(opts):        
         sformat = sformat + o1.get_struct()
         o1.check_offset(current_length)
-        current_length += len(o1)  # and accumulate past the current element
+        l_o1 = len(o1)
+        #if l_o1 < 0: # use the rest of the buffer
+        #    l_o1 = lline - current_length
+        current_length += l_o1  # add the length
         if current_length < lline:
             current_n = n
         elif current_length == lline:
-           current_n = n
-           break
+            current_n = n
+            break
         else : #  current_length > lline:
             raise ValueError("Definition mismatch with record length. ",o1.get_name(),
-                             "offset instructure",current_length,"record length",lline)
+                            "offset instructure",current_length,"record length",lline)
+        l_needed =struct.calcsize(sformat)
 
-    l_needed =struct.calcsize(sformat)
-    #print("====22==",l_needed,lline)
+    except Exception as e:
+        print("exception 35",e,traceback.format_exc())
+        raise(e)
     try:
         #print("dump it")
         output1 = struct.unpack(sformat,line[position:position+l_needed])
@@ -45,13 +53,14 @@ def processit(opts,line,position):
 
         raise e
     data1 = OrderedDict()
-    for n1, o1 in enumerate(opts):
+    try:
+     for n1, o1 in enumerate(opts):
         # we need to tie up the value in output with the structure of variables in opts
         # if we have more defintions than data .... crete them as None
         if n1 > current_n:
-             #print("===52=", n,current_n,o1.get_name())
-             data1[o1.get_name()] = None
-             continue #
+            #print("===52=", n,current_n,o1.get_name())
+            data1[o1.get_name()] = None
+            continue #
         if o1.ignore is True : # do not produce any output
             continue
         v1= output1[n1] # get the value
@@ -107,6 +116,8 @@ def processit(opts,line,position):
             o1.set(v1)
             #if v1 is not None:
             data1[o1.get_name()] = o1.get_value()
-
+    except Exception as e:
+            print("exception 115",e,traceback.format_exc(),"line",n,o1)
+            raise e
     return data1
 
